@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARGUS AI Sentinel — Portugal's Citizen Ocean Network</title>
+  <meta name="description" content="ARGUS AI Sentinel connects citizens, artificial intelligence and maritime authorities to protect Portugal's ocean through citizen science.">
+  <meta name="theme-color" content="#020617">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ARGUS AI Sentinel">
+  <meta property="og:description" content="The ocean belongs to all of us. Join Portugal's largest citizen-powered maritime observation network.">
+  <meta property="og:image" content="arguslogo.jpeg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "ARGUS AI Sentinel",
+    "applicationCategory": "EnvironmentalApplication",
+    "operatingSystem": "Android, iOS",
+    "description": "Citizen science platform for maritime observation in Portugal.",
+    "provider": { "@type": "Organization", "name": "FrontSea Intelligence", "url": "https://frontseaintelligence.com" }
+  }
+  </script>
+  <style>
+    :root {
+      --bg: #020617;
+      --bg-2: #050a18;
+      --text: #f0f6ff;
+      --muted: rgba(240, 246, 255, 0.62);
+      --soft: rgba(240, 246, 255, 0.88);
+      --blue: #60a5fa;
+      --blue-bright: #3b82f6;
+      --glow: rgba(96, 165, 250, 0.18);
+      --border: rgba(96, 165, 250, 0.14);
+      --glass: rgba(8, 16, 36, 0.62);
+      --serif: Cinzel, Georgia, serif;
+      --sans: Inter, system-ui, sans-serif;
+      --max: 1140px;
+      --gap: clamp(4.5rem, 9vw, 7.5rem);
+      --radius: 18px;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    .skip { position: absolute; left: -9999px; top: 0; z-index: 9999; padding: .75rem 1rem; background: var(--blue); color: #000; }
+    .skip:focus { left: 1rem; top: 1rem; }
+    .bg-fixed {
+      position: fixed; inset: 0; z-index: -3;
+      background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(59,130,246,.12), transparent 55%),
+                  radial-gradient(ellipse 50% 40% at 90% 60%, rgba(30,64,175,.08), transparent 50%),
+                  linear-gradient(180deg, #020617 0%, #050a18 45%, #020617 100%);
+    }
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .9rem clamp(1rem, 4vw, 2.5rem);
+      background: rgba(2,6,23,.72); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border);
+    }
+    .brand { display: flex; align-items: center; gap: .7rem; text-decoration: none; color: var(--text); }
+    .brand img { height: 36px; width: 36px; border-radius: 8px; object-fit: cover; }
+    .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+    .brand-text strong { font-family: var(--serif); font-size: .95rem; letter-spacing: .18em; }
+    .brand-text span { font-size: .62rem; letter-spacing: .22em; text-transform: uppercase; color: var(--blue); }
+    .nav-links { display: none; gap: 1.25rem; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: .82rem; letter-spacing: .04em; transition: color .2s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
+    .lang a { color: var(--blue); text-decoration: none; font-size: .8rem; margin: 0 2px; opacity: .7; }
+    .lang a.active { opacity: 1; font-weight: 600; color: var(--text); }
+    @media (min-width: 900px) { .nav-links { display: flex; } }
+    .container { max-width: var(--max); margin: 0 auto; padding: 0 clamp(1.1rem, 4vw, 2.5rem); }
+    section { padding: var(--gap) 0; }
+    section + section { border-top: 1px solid var(--border); }
+    .label { display: inline-block; font-size: .7rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--blue); margin-bottom: .85rem; }
+    .title { font-family: var(--serif); font-size: clamp(1.9rem, 4.5vw, 3rem); font-weight: 600; line-height: 1.15; margin: 0 0 1.25rem; letter-spacing: .03em; }
+    .lead { font-size: clamp(1rem, 2vw, 1.12rem); color: var(--soft); max-width: 680px; margin: 0 0 2rem; line-height: 1.8; }
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.on { opacity: 1; transform: none; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+      padding: .85rem 1.5rem; border-radius: 12px; font-size: .9rem; font-weight: 600;
+      text-decoration: none; border: 1px solid transparent; transition: all .25s ease; font-family: inherit;
+    }
+    .btn-primary { background: rgba(59,130,246,.18); border-color: rgba(96,165,250,.45); color: var(--text); box-shadow: 0 0 28px var(--glow); }
+    .btn-primary:hover { background: rgba(59,130,246,.3); transform: translateY(-2px); }
+    .btn-ghost { background: transparent; border-color: var(--border); color: var(--soft); }
+    .btn-soon {
+      background: rgba(255,255,255,.04); border-color: var(--border); color: var(--muted);
+      cursor: default; box-shadow: none; pointer-events: none;
+    }
+    .soon-tag {
+      font-size: .62rem; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--blue); margin-left: .35rem; opacity: .85;
+    }
+    .glass {
+      background: var(--glass); border: 1px solid var(--border); border-radius: var(--radius);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    }
+    /* HERO */
+    .hero {
+      min-height: 100vh; display: grid; align-items: center; position: relative;
+      padding: 6.5rem 0 4rem; border-top: none !important; overflow: hidden;
+    }
+    #particles { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+    .hero-grid {
+      position: relative; z-index: 1; display: grid; gap: 3rem; align-items: center;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 960px) { .hero-grid { grid-template-columns: 1.05fr .95fr; } }
+    .hero h1 {
+      font-family: var(--serif); font-size: clamp(2.2rem, 5.5vw, 3.8rem);
+      line-height: 1.08; margin: 0 0 1.25rem; letter-spacing: .02em;
+    }
+    .hero-sub { font-size: clamp(1rem, 2.2vw, 1.15rem); color: var(--muted); max-width: 540px; margin: 0 0 2rem; line-height: 1.75; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: .85rem; margin-bottom: 1.5rem; }
+    .hero-note { font-size: .82rem; color: var(--muted); letter-spacing: .04em; }
+    .phone-wrap { display: flex; justify-content: center; perspective: 900px; }
+    .phone {
+      width: min(290px, 78vw); aspect-ratio: 9/19; border-radius: 34px; padding: 10px;
+      background: linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.14); box-shadow: 0 30px 80px rgba(0,0,0,.55), 0 0 60px var(--glow);
+      transform: rotateY(-8deg) rotateX(4deg); animation: floatPhone 7s ease-in-out infinite;
+    }
+    @keyframes floatPhone { 0%,100%{transform:rotateY(-8deg) rotateX(4deg) translateY(0)} 50%{transform:rotateY(-6deg) rotateX(2deg) translateY(-10px)} }
+    .phone-screen { width: 100%; height: 100%; border-radius: 26px; overflow: hidden; background: #0a1428; }
+    .phone-screen img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    .app-ui {
+      height: 100%; padding: 1.25rem .85rem; display: flex; flex-direction: column;
+      background: linear-gradient(180deg, #060d1c 0%, #030712 100%);
+    }
+    .app-ui-logo { width: 72px; margin: .5rem auto 1rem; border-radius: 8px; opacity: .95; }
+    .app-ui-brand { text-align: center; margin-bottom: 1.25rem; }
+    .app-ui-brand strong { display: block; font-family: var(--serif); font-size: .95rem; letter-spacing: .22em; }
+    .app-ui-brand span { font-size: .58rem; letter-spacing: .18em; color: var(--blue); text-transform: uppercase; }
+    .app-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .45rem; flex: 1; }
+    .app-tile {
+      border: 1px solid var(--border); border-radius: 10px; padding: .55rem .45rem;
+      font-size: .58rem; font-weight: 600; letter-spacing: .04em; text-align: left;
+      background: rgba(255,255,255,.02); color: var(--soft); line-height: 1.3;
+    }
+    /* CONSTELLATION */
+    .myth-grid { display: grid; gap: 3rem; align-items: center; grid-template-columns: 1fr; }
+    @media (min-width: 900px) { .myth-grid { grid-template-columns: 1fr 1fr; } }
+    .constellation { width: 100%; max-width: 420px; margin: 0 auto; filter: drop-shadow(0 0 30px var(--glow)); }
+    .prose p { color: var(--soft); margin: 0 0 1.2rem; max-width: 640px; line-height: 1.85; }
+    .prose p:last-child { margin-bottom: 0; }
+    .pill-list { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: 1.5rem; }
+    .pill { padding: .45rem .85rem; border-radius: 999px; border: 1px solid var(--border); font-size: .78rem; color: var(--muted); background: rgba(255,255,255,.02); }
+    /* TIMELINE */
+    .timeline { max-width: 640px; margin: 0 auto; position: relative; }
+    .timeline::before {
+      content: ""; position: absolute; left: 22px; top: 12px; bottom: 12px; width: 1px;
+      background: linear-gradient(180deg, var(--blue), rgba(96,165,250,.2));
+    }
+    .step {
+      display: flex; gap: 1.25rem; padding: 1rem 0; opacity: 0; transform: translateX(-12px);
+      transition: opacity .55s ease, transform .55s ease;
+    }
+    .step.on { opacity: 1; transform: none; }
+    .step-dot {
+      width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; display: grid; place-items: center;
+      background: rgba(59,130,246,.12); border: 1px solid rgba(96,165,250,.35); font-size: .72rem; font-weight: 700; color: var(--blue);
+      box-shadow: 0 0 16px var(--glow);
+    }
+    .step h3 { margin: 0 0 .35rem; font-size: 1rem; }
+    .step p { margin: 0; font-size: .92rem; color: var(--muted); line-height: 1.65; }
+    .step-arrow { text-align: center; color: var(--blue); opacity: .45; padding: .15rem 0; }
+    .ai-human {
+      margin-top: 2.5rem; padding: 1.5rem 1.75rem; text-align: center;
+      background: linear-gradient(135deg, rgba(59,130,246,.08), rgba(2,6,23,.4));
+    }
+    .ai-human strong { display: block; font-family: var(--serif); font-size: 1.15rem; margin-bottom: .5rem; letter-spacing: .06em; }
+    .ai-human p { margin: 0; color: var(--muted); font-size: .95rem; }
+    /* HUB */
+    .hub-grid { display: grid; gap: 1.25rem; grid-template-columns: 1fr; margin-bottom: 2.5rem; }
+    @media (min-width: 768px) { .hub-grid { grid-template-columns: repeat(3, 1fr); } }
+    .hub-shot { overflow: hidden; border-radius: var(--radius); border: 1px solid var(--border); aspect-ratio: 16/10; background: #0a1428; }
+    .hub-shot img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    .arch { padding: 2rem; overflow-x: auto; }
+    .arch svg { width: 100%; min-width: 520px; height: auto; display: block; }
+    .arch-line { stroke: rgba(96,165,250,.35); stroke-width: 1.5; fill: none; stroke-dasharray: 6 6; animation: dash 20s linear infinite; }
+    @keyframes dash { to { stroke-dashoffset: -120; } }
+    .arch-node { fill: rgba(8,16,36,.9); stroke: rgba(96,165,250,.4); stroke-width: 1; }
+    .arch-text { fill: var(--text); font-size: 11px; font-family: Inter, sans-serif; }
+    .arch-sub { fill: var(--muted); font-size: 9px; font-family: Inter, sans-serif; }
+    /* AI CARDS */
+    .cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .card { padding: 1.5rem; transition: transform .3s, box-shadow .3s, border-color .3s; }
+    .card:hover { transform: translateY(-4px); border-color: rgba(96,165,250,.3); box-shadow: 0 12px 40px rgba(0,0,0,.35), 0 0 24px var(--glow); }
+    .card-icon { width: 42px; height: 42px; border-radius: 10px; display: grid; place-items: center; margin-bottom: 1rem; background: rgba(59,130,246,.12); border: 1px solid var(--border); color: var(--blue); font-size: 1.1rem; }
+    .card h3 { margin: 0 0 .5rem; font-size: .98rem; }
+    .card p { margin: 0; font-size: .88rem; color: var(--muted); line-height: 1.6; }
+    /* PARTNERS */
+    .partner-cats { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    .partner-cat { padding: 1.5rem; min-height: 140px; }
+    .partner-cat h3 { margin: 0 0 1rem; font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; color: var(--blue); }
+    .logo-slots { display: flex; flex-wrap: wrap; gap: .75rem; }
+    .logo-slot {
+      width: 88px; height: 44px; border-radius: 8px; border: 1px dashed rgba(96,165,250,.22);
+      background: rgba(255,255,255,.02); display: grid; place-items: center; font-size: .65rem; color: rgba(240,246,255,.25);
+    }
+    /* MANIFESTO */
+    .manifesto {
+      min-height: 92vh; display: flex; align-items: center; position: relative; overflow: hidden;
+      border-top: none !important; padding: 5rem 0;
+    }
+    .manifesto-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background: radial-gradient(circle at 50% 40%, rgba(59,130,246,.12), transparent 55%),
+                  linear-gradient(180deg, transparent, rgba(2,6,23,.8));
+    }
+    .manifesto-inner { position: relative; z-index: 1; max-width: 820px; }
+    .manifesto blockquote {
+      margin: 0; padding: 0; border: none; font-family: var(--serif);
+      font-size: clamp(1.35rem, 3.2vw, 2.15rem); line-height: 1.55; letter-spacing: .02em; color: var(--text);
+    }
+    .manifesto blockquote p { margin: 0 0 1.5rem; }
+    .manifesto .closing {
+      margin-top: 2rem; font-family: var(--serif); font-size: clamp(1.5rem, 3.5vw, 2.4rem);
+      color: var(--blue); letter-spacing: .04em; text-shadow: 0 0 40px var(--glow);
+    }
+    /* DOWNLOAD */
+    .download-grid { display: grid; gap: 3rem; align-items: center; grid-template-columns: 1fr; }
+    @media (min-width: 900px) { .download-grid { grid-template-columns: 1fr 1fr; } }
+    .store-btns { display: flex; flex-direction: column; gap: .85rem; margin: 1.5rem 0; }
+    .store-btn {
+      display: inline-flex; align-items: center; gap: .85rem; padding: .85rem 1.25rem;
+      border-radius: 12px; border: 1px solid var(--border); text-decoration: none; color: var(--text);
+      background: rgba(255,255,255,.03); transition: all .25s;
+    }
+    .store-btn:hover { border-color: rgba(96,165,250,.35); background: rgba(59,130,246,.1); }
+    .store-btn small { display: block; font-size: .65rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+    .store-btn strong { font-size: .95rem; }
+    .qr-box {
+      width: 120px; height: 120px; border-radius: 12px; border: 1px dashed rgba(96,165,250,.3);
+      display: grid; place-items: center; font-size: .72rem; color: var(--muted); text-align: center; margin-top: 1rem;
+    }
+    .install-steps { margin: 1.5rem 0 0; padding-left: 1.1rem; color: var(--muted); font-size: .9rem; }
+    .install-steps li { margin-bottom: .5rem; }
+    /* FOOTER */
+    footer { padding: 3.5rem 0 2rem; border-top: 1px solid var(--border); }
+    .footer-grid { display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-bottom: 2.5rem; }
+    .footer-grid h4 { margin: 0 0 .85rem; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); }
+    .footer-grid a, .footer-grid p { display: block; color: var(--muted); text-decoration: none; font-size: .88rem; margin-bottom: .45rem; }
+    .footer-grid a:hover { color: var(--text); }
+    .footer-bottom { text-align: center; font-size: .82rem; color: var(--muted); padding-top: 2rem; border-top: 1px solid var(--border); }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
+  <div class="bg-fixed" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a href="#top" class="brand">
+      <img src="arguslogo.jpeg" alt="" width="36" height="36" loading="eager">
+      <div class="brand-text">
+        <strong>ARGUS</strong>
+        <span>AI Sentinel</span>
+      </div>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#myth" data-i18n="navMyth">Who is Argus</a>
+      <a href="#how" data-i18n="navHow">How it Works</a>
+      <a href="#hub" data-i18n="navHub">Intelligence Hub</a>
+      <a href="#manifesto" data-i18n="navManifesto">Manifesto</a>
+      <a href="#download" data-i18n="navJoin">Join</a>
+    </nav>
+    <div class="nav-right">
+      <div class="lang">
+        <a href="#" id="lang-pt" class="active" onclick="setLang('pt');return false">PT</a> |
+        <a href="#" id="lang-en" onclick="setLang('en');return false">EN</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- HERO -->
+    <section class="hero" id="top">
+      <canvas id="particles" aria-hidden="true"></canvas>
+      <div class="container hero-grid">
+        <div class="reveal">
+          <p class="label" data-i18n="heroLabel">National Movement</p>
+          <h1 data-i18n="heroTitle">The Ocean Belongs to All of Us.</h1>
+          <p class="hero-sub" data-i18n="heroSub">ARGUS AI Sentinel connects citizens, Artificial Intelligence and maritime authorities to protect Portugal's ocean through citizen science and real-time maritime intelligence.</p>
+          <div class="hero-actions">
+            <a href="https://app.argusaisentinel.com" class="btn btn-primary" target="_blank" rel="noopener" data-i18n="btnWeb">Open Web App</a>
+            <span class="btn btn-soon" aria-disabled="true"><span data-i18n="btnPlaySoon">Google Play</span> <span class="soon-tag" data-i18n="soonTag">Coming Soon</span></span>
+            <a href="#myth" class="btn btn-ghost" data-i18n="btnLearn">Learn More</a>
+          </div>
+          <p class="hero-note" data-i18n="heroNote">Every citizen becomes one more eye protecting the ocean.</p>
+        </div>
+        <div class="phone-wrap reveal">
+          <div class="phone" aria-hidden="true">
+            <div class="phone-screen">
+              <div class="app-ui">
+                <img src="arguslogo.jpeg" alt="" class="app-ui-logo">
+                <div class="app-ui-brand"><strong>ARGUS</strong><span>AI Sentinel</span></div>
+                <div class="app-grid">
+                  <div class="app-tile">🐬 <span data-i18n="cat1">CETÁCEOS</span></div>
+                  <div class="app-tile">🐢 <span data-i18n="cat2">TARTARUGAS</span></div>
+                  <div class="app-tile">🐦 <span data-i18n="cat3">AVES MARINHAS</span></div>
+                  <div class="app-tile">🦭 <span data-i18n="cat4">OUTROS ANIMAIS</span></div>
+                  <div class="app-tile">🐟 <span data-i18n="cat5">PEIXES</span></div>
+                  <div class="app-tile">🫧 <span data-i18n="cat6">ANIMAL MORTO</span></div>
+                  <div class="app-tile">🗑️ <span data-i18n="cat7">LIXO MARINHO</span></div>
+                  <div class="app-tile">🏮 <span data-i18n="cat8">REDES FANTASMA</span></div>
+                  <div class="app-tile">🛢️ <span data-i18n="cat9">POLUIÇÃO</span></div>
+                  <div class="app-tile">⚠️ <span data-i18n="cat10">PERIGO NAVEGAÇÃO</span></div>
+                  <div class="app-tile">📷 <span data-i18n="cat11">OUTRA OBSERVAÇÃO</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHO IS ARGUS -->
+    <section id="myth">
+      <div class="container reveal">
+        <div class="myth-grid">
+          <div>
+            <p class="label" data-i18n="mythLabel">Origin</p>
+            <h2 class="title" data-i18n="mythTitle">Who is Argus?</h2>
+            <div class="prose">
+              <p data-i18n="mythP1">In Greek mythology, Argus Panoptes was a guardian with one hundred eyes — able to watch over everything, never sleeping entirely.</p>
+              <p data-i18n="mythP2">ARGUS AI Sentinel transforms this ancient idea into a modern technological network.</p>
+              <p data-i18n="mythP3">Every observation. Every citizen. Every report. Another eye protecting the ocean.</p>
+            </div>
+          </div>
+          <div class="constellation" aria-hidden="true">
+            <svg viewBox="0 0 400 360" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <radialGradient id="eyeGlow" cx="50%" cy="45%" r="50%">
+                  <stop offset="0%" stop-color="#93c5fd" stop-opacity=".35"/>
+                  <stop offset="100%" stop-color="#020617" stop-opacity="0"/>
+                </radialGradient>
+              </defs>
+              <ellipse cx="200" cy="155" rx="130" ry="75" fill="url(#eyeGlow)"/>
+              <g fill="#e0f2fe" opacity=".85">
+                <circle cx="200" cy="155" r="3"/><circle cx="200" cy="155" r="18" fill="none" stroke="#93c5fd" stroke-width=".5" opacity=".4"/>
+                <circle cx="200" cy="155" r="32" fill="none" stroke="#60a5fa" stroke-width=".4" opacity=".35"/>
+                <circle cx="200" cy="155" r="48" fill="none" stroke="#3b82f6" stroke-width=".3" opacity=".25"/>
+              </g>
+              <g fill="#f0f9ff">
+                <circle cx="130" cy="140" r="2"/><circle cx="145" cy="125" r="1.5"/><circle cx="165" cy="115" r="2"/>
+                <circle cx="190" cy="108" r="1.5"/><circle cx="210" cy="108" r="1.5"/><circle cx="235" cy="115" r="2"/>
+                <circle cx="255" cy="125" r="1.5"/><circle cx="270" cy="140" r="2"/><circle cx="120" cy="160" r="1.5"/>
+                <circle cx="280" cy="160" r="1.5"/><circle cx="115" cy="175" r="2"/><circle cx="285" cy="175" r="2"/>
+                <circle cx="125" cy="195" r="1.5"/><circle cx="275" cy="195" r="1.5"/><circle cx="140" cy="210" r="2"/>
+                <circle cx="260" cy="210" r="2"/><circle cx="160" cy="220" r="1.5"/><circle cx="240" cy="220" r="1.5"/>
+                <circle cx="180" cy="228" r="1.5"/><circle cx="220" cy="228" r="1.5"/>
+                <circle cx="155" cy="130" r="1.2" opacity=".6"/><circle cx="245" cy="130" r="1.2" opacity=".6"/>
+                <circle cx="170" cy="200" r="1.2" opacity=".6"/><circle cx="230" cy="200" r="1.2" opacity=".6"/>
+              </g>
+              <path d="M130 140 L145 125 L165 115 L190 108 L210 108 L235 115 L255 125 L270 140" fill="none" stroke="#60a5fa" stroke-width=".4" opacity=".25"/>
+              <path d="M115 175 L125 195 L140 210 L160 220 L180 228 L220 228 L240 220 L260 210 L275 195 L285 175" fill="none" stroke="#60a5fa" stroke-width=".4" opacity=".25"/>
+              <path d="M120 160 L115 175" stroke="#93c5fd" stroke-width=".3" opacity=".3"/><path d="M280 160 L285 175" stroke="#93c5fd" stroke-width=".3" opacity=".3"/>
+              <g stroke="#60a5fa" stroke-width=".5" fill="none" opacity=".35">
+                <path d="M60 280 Q100 250 140 265 T220 255 T300 270 T360 285"/>
+                <path d="M40 300 Q90 275 150 290 T250 280 T340 295 T390 305"/>
+                <path d="M20 320 Q80 300 160 315 T280 305 T380 325"/>
+              </g>
+              <g fill="#93c5fd" opacity=".5">
+                <circle cx="80" cy="278" r="1.5"/><circle cx="120" cy="268" r="1.2"/><circle cx="160" cy="272" r="1.5"/>
+                <circle cx="200" cy="262" r="1.2"/><circle cx="240" cy="268" r="1.5"/><circle cx="280" cy="275" r="1.2"/>
+                <circle cx="320" cy="282" r="1.5"/><circle cx="360" cy="288" r="1.2"/>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHY ARGUS -->
+    <section id="why">
+      <div class="container reveal">
+        <p class="label" data-i18n="whyLabel">The Challenge</p>
+        <h2 class="title" data-i18n="whyTitle">Why ARGUS Exists</h2>
+        <p class="lead" data-i18n="whyLead">Portugal has one of Europe's largest Exclusive Economic Zones. Monitoring such a vast maritime territory is impossible using traditional resources alone.</p>
+        <div class="prose">
+          <p data-i18n="whyP1">Thousands of people interact with the ocean every day — fishermen, sailors, whale watching companies, divers, surfers, researchers, beach visitors and families.</p>
+          <p data-i18n="whyP2">Together we can create Portugal's largest citizen-powered ocean monitoring network.</p>
+        </div>
+        <div class="pill-list">
+          <span class="pill" data-i18n="pill1">Fishermen</span>
+          <span class="pill" data-i18n="pill2">Sailors</span>
+          <span class="pill" data-i18n="pill3">Divers</span>
+          <span class="pill" data-i18n="pill4">Surfers</span>
+          <span class="pill" data-i18n="pill5">Researchers</span>
+          <span class="pill" data-i18n="pill6">Families</span>
+          <span class="pill" data-i18n="pill7">Beach visitors</span>
+          <span class="pill" data-i18n="pill8">Whale watching</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section id="how">
+      <div class="container reveal">
+        <p class="label" data-i18n="howLabel">Process</p>
+        <h2 class="title" data-i18n="howTitle">How It Works</h2>
+        <p class="lead" data-i18n="howLead">From a single observation to national maritime intelligence — every step designed for trust and precision.</p>
+        <div class="timeline" id="timeline">
+          <div class="step" data-i="0"><div class="step-dot">1</div><div><h3 data-i18n="step1t">Citizen submits an observation</h3><p data-i18n="step1d">A photograph, location and category — from cetaceans to marine litter — sent from the coast.</p></div></div>
+          <div class="step-arrow" aria-hidden="true">↓</div>
+          <div class="step" data-i="1"><div class="step-dot">2</div><div><h3 data-i18n="step2t">Azure AI Weather enriches the report</h3><p data-i18n="step2d">Environmental and weather data are automatically attached to every observation.</p></div></div>
+          <div class="step-arrow" aria-hidden="true">↓</div>
+          <div class="step" data-i="2"><div class="step-dot">3</div><div><h3 data-i18n="step3t">Artificial Intelligence analyses the report</h3><p data-i18n="step3d">Species identification, classification, deduplication and priority scoring.</p></div></div>
+          <div class="step-arrow" aria-hidden="true">↓</div>
+          <div class="step" data-i="3"><div class="step-dot">4</div><div><h3 data-i18n="step4t">FrontSea Intelligence Hub organises</h3><p data-i18n="step4d">Reports are validated, correlated and prepared for operational review.</p></div></div>
+          <div class="step-arrow" aria-hidden="true">↓</div>
+          <div class="step" data-i="4"><div class="step-dot">5</div><div><h3 data-i18n="step5t">A human operator reviews</h3><p data-i18n="step5d">Every report passes through human validation before any operational action.</p></div></div>
+          <div class="step-arrow" aria-hidden="true">↓</div>
+          <div class="step" data-i="5"><div class="step-dot">6</div><div><h3 data-i18n="step6t">Authorities receive information</h3><p data-i18n="step6d">Scientific partners and authorities receive structured, validated intelligence.</p></div></div>
+        </div>
+        <div class="glass ai-human reveal">
+          <strong data-i18n="aiHumanTitle">Artificial Intelligence + Human Validation</strong>
+          <p data-i18n="aiHumanDesc">The AI assists. Humans make operational decisions.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FRONTSEA HUB -->
+    <section id="hub">
+      <div class="container reveal">
+        <p class="label" data-i18n="hubLabel">Intelligence Center</p>
+        <h2 class="title" data-i18n="hubTitle">FrontSea Intelligence Hub</h2>
+        <p class="lead" data-i18n="hubLead">The intelligence center behind the ecosystem — where citizen observations, weather data and maritime intelligence converge into one operational platform.</p>
+        <div class="hub-grid">
+          <figure class="hub-shot"><img src="hub-dashboard.png" alt="" loading="lazy" width="400" height="250"></figure>
+          <figure class="hub-shot"><img src="hub-validation.png" alt="" loading="lazy" width="400" height="250"></figure>
+          <figure class="hub-shot"><img src="hub-map.png" alt="" loading="lazy" width="400" height="250"></figure>
+        </div>
+        <div class="glass arch reveal">
+          <svg viewBox="0 0 720 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Architecture diagram">
+            <rect class="arch-node" x="280" y="155" width="160" height="70" rx="12"/>
+            <text class="arch-text" x="360" y="185" text-anchor="middle">FrontSea Hub</text>
+            <text class="arch-sub" x="360" y="205" text-anchor="middle">Intelligence Platform</text>
+            <rect class="arch-node" x="40" y="30" width="120" height="50" rx="10"/>
+            <text class="arch-text" x="100" y="52" text-anchor="middle">ARGUS</text>
+            <text class="arch-sub" x="100" y="68" text-anchor="middle">Citizen Science</text>
+            <rect class="arch-node" x="40" y="155" width="120" height="50" rx="10"/>
+            <text class="arch-text" x="100" y="177" text-anchor="middle">Azure AI</text>
+            <text class="arch-sub" x="100" y="193" text-anchor="middle">Weather</text>
+            <rect class="arch-node" x="40" y="280" width="120" height="50" rx="10"/>
+            <text class="arch-text" x="100" y="302" text-anchor="middle">VISUS AI</text>
+            <text class="arch-sub" x="100" y="318" text-anchor="middle">Future</text>
+            <rect class="arch-node" x="560" y="30" width="120" height="50" rx="10"/>
+            <text class="arch-text" x="620" y="52" text-anchor="middle">Partners</text>
+            <text class="arch-sub" x="620" y="68" text-anchor="middle">Science</text>
+            <rect class="arch-node" x="560" y="155" width="120" height="50" rx="10"/>
+            <text class="arch-text" x="620" y="177" text-anchor="middle">Authorities</text>
+            <text class="arch-sub" x="620" y="193" text-anchor="middle">Operations</text>
+            <rect class="arch-node" x="200" y="310" width="100" height="44" rx="8"/>
+            <text class="arch-sub" x="250" y="337" text-anchor="middle">USVs · Drones</text>
+            <rect class="arch-node" x="310" y="310" width="100" height="44" rx="8"/>
+            <text class="arch-sub" x="360" y="337" text-anchor="middle">Smart Buoys</text>
+            <rect class="arch-node" x="420" y="310" width="100" height="44" rx="8"/>
+            <text class="arch-sub" x="470" y="337" text-anchor="middle">Sensors</text>
+            <path class="arch-line" d="M160 55 L280 180"/><path class="arch-line" d="M160 180 L280 190"/>
+            <path class="arch-line" d="M160 305 L280 210"/><path class="arch-line" d="M440 190 L560 55"/>
+            <path class="arch-line" d="M440 190 L560 180"/><path class="arch-line" d="M360 225 L360 310"/>
+            <path class="arch-line" d="M300 310 L360 225"/><path class="arch-line" d="M420 310 L360 225"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI -->
+    <section id="ai">
+      <div class="container reveal">
+        <p class="label" data-i18n="aiLabel">Technology</p>
+        <h2 class="title" data-i18n="aiTitle">Artificial Intelligence</h2>
+        <p class="lead" data-i18n="aiLead">AI supports every observation — always under human supervision. Simple, transparent, responsible.</p>
+        <div class="cards">
+          <article class="glass card"><div class="card-icon">◎</div><h3 data-i18n="ai1t">Identify species</h3><p data-i18n="ai1d">Recognise cetaceans, seabirds, turtles and other marine life from photographs.</p></article>
+          <article class="glass card"><div class="card-icon">◈</div><h3 data-i18n="ai2t">Detect marine litter</h3><p data-i18n="ai2d">Classify pollution, ghost nets and debris observed at sea or on the coast.</p></article>
+          <article class="glass card"><div class="card-icon">◫</div><h3 data-i18n="ai3t">Classify observations</h3><p data-i18n="ai3d">Structure citizen reports into consistent, searchable categories.</p></article>
+          <article class="glass card"><div class="card-icon">⟲</div><h3 data-i18n="ai4t">Remove duplicates</h3><p data-i18n="ai4d">Filter repeated reports to keep intelligence clean and reliable.</p></article>
+          <article class="glass card"><div class="card-icon">▲</div><h3 data-i18n="ai5t">Prioritise events</h3><p data-i18n="ai5d">Score urgency so critical observations reach operators first.</p></article>
+          <article class="glass card"><div class="card-icon">▤</div><h3 data-i18n="ai6t">Structured reports</h3><p data-i18n="ai6d">Generate clear summaries ready for human review and authorities.</p></article>
+          <article class="glass card"><div class="card-icon">✦</div><h3 data-i18n="ai7t">Enrich observations</h3><p data-i18n="ai7d">Attach weather, location and environmental context to every report automatically.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PARTNERS -->
+    <section id="partners">
+      <div class="container reveal">
+        <p class="label" data-i18n="partnersLabel">Community</p>
+        <h2 class="title" data-i18n="partnersTitle">Partners</h2>
+        <p class="lead" data-i18n="partnersLead">A growing network of organisations committed to protecting Portugal's ocean.</p>
+        <div class="partner-cats">
+          <div class="glass partner-cat"><h3 data-i18n="pcat1">Whale Watching</h3><div class="logo-slots"><div class="logo-slot">Logo</div><div class="logo-slot">Logo</div></div></div>
+          <div class="glass partner-cat"><h3 data-i18n="pcat2">Research Centers</h3><div class="logo-slots"><div class="logo-slot">Logo</div><div class="logo-slot">Logo</div></div></div>
+          <div class="glass partner-cat"><h3 data-i18n="pcat3">Universities</h3><div class="logo-slots"><div class="logo-slot">Logo</div><div class="logo-slot">Logo</div></div></div>
+          <div class="glass partner-cat"><h3 data-i18n="pcat4">Public Authorities</h3><div class="logo-slots"><div class="logo-slot">Logo</div><div class="logo-slot">Logo</div></div></div>
+          <div class="glass partner-cat"><h3 data-i18n="pcat5">Municipalities</h3><div class="logo-slots"><div class="logo-slot">Logo</div><div class="logo-slot">Logo</div></div></div>
+          <div class="glass partner-cat"><h3 data-i18n="pcat6">NGOs</h3><div class="logo-slots"><div class="logo-slot">Logo</div><div class="logo-slot">Logo</div></div></div>
+          <div class="glass partner-cat"><h3 data-i18n="pcat7">Technology</h3><div class="logo-slots"><div class="logo-slot">Logo</div><div class="logo-slot">Logo</div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MANIFESTO -->
+    <section class="manifesto" id="manifesto">
+      <div class="manifesto-bg" aria-hidden="true"></div>
+      <div class="container manifesto-inner reveal">
+        <p class="label" data-i18n="manifestoLabel">Manifesto</p>
+        <blockquote>
+          <p data-i18n="man1">The ocean has never belonged only to sailors.</p>
+          <p data-i18n="man2">It belongs to every child playing on the beach. Every fisherman. Every diver. Every scientist. Every citizen who stops to help.</p>
+          <p data-i18n="man3">Protecting the ocean begins with observing it.</p>
+          <p data-i18n="man4">ARGUS AI Sentinel transforms thousands of individual observations into one national intelligence network.</p>
+          <p data-i18n="man5">No satellite can replace the eyes of those who live the sea every day.</p>
+          <p data-i18n="man6">Today we are hundreds. Tomorrow we can become thousands.</p>
+        </blockquote>
+        <p class="closing" data-i18n="manClosing">Every citizen becomes another Eye of Argus.</p>
+        <p class="lead" style="margin-top:1.5rem;margin-bottom:0" data-i18n="manFinal">Together we protect Portugal's greatest natural heritage.</p>
+      </div>
+    </section>
+
+    <!-- DOWNLOAD -->
+    <section id="download">
+      <div class="container">
+        <div class="download-grid reveal">
+          <div class="phone-wrap">
+            <div class="phone">
+              <div class="phone-screen">
+                <div class="app-ui">
+                  <img src="arguslogo.jpeg" alt="" class="app-ui-logo" loading="lazy">
+                  <div class="app-ui-brand"><strong>ARGUS</strong><span>AI Sentinel</span></div>
+                  <div class="app-grid">
+                    <div class="app-tile">🐬 <span data-i18n="cat1">CETÁCEOS</span></div>
+                    <div class="app-tile">🐢 <span data-i18n="cat2">TARTARUGAS</span></div>
+                    <div class="app-tile">🐦 <span data-i18n="cat3">AVES MARINHAS</span></div>
+                    <div class="app-tile">🦭 <span data-i18n="cat4">OUTROS ANIMAIS</span></div>
+                    <div class="app-tile">🐟 <span data-i18n="cat5">PEIXES</span></div>
+                    <div class="app-tile">🫧 <span data-i18n="cat6">ANIMAL MORTO</span></div>
+                    <div class="app-tile">🗑️ <span data-i18n="cat7">LIXO MARINHO</span></div>
+                    <div class="app-tile">🏮 <span data-i18n="cat8">REDES FANTASMA</span></div>
+                    <div class="app-tile">🛢️ <span data-i18n="cat9">POLUIÇÃO</span></div>
+                    <div class="app-tile">⚠️ <span data-i18n="cat10">PERIGO NAVEGAÇÃO</span></div>
+                    <div class="app-tile">📷 <span data-i18n="cat11">OUTRA OBSERVAÇÃO</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <p class="label" data-i18n="dlLabel">Join the Movement</p>
+            <h2 class="title" data-i18n="dlTitle">Become One of Argus' Eyes</h2>
+            <p class="lead" data-i18n="dlLead">You are not downloading an app. You are joining Portugal's largest maritime observation network.</p>
+            <div class="store-btns">
+              <div class="store-btn btn-soon" aria-disabled="true">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 20.5V3.5C3 2.91 3.34 2.39 3.84 2.15L13.69 12L3.84 21.85C3.34 21.6 3 21.09 3 20.5ZM16.81 15.12L6.05 21.34L14.54 12.85L16.81 15.12ZM20.16 10.81C20.5 11.08 20.75 11.5 20.75 12C20.75 12.5 20.53 12.9 20.18 13.18L17.89 14.5L15.39 12L17.89 9.5L20.16 10.81ZM6.05 2.66L16.81 8.88L14.54 11.15L6.05 2.66Z"/></svg>
+                <div><small data-i18n="dlPlaySmall">Disponível na</small><strong data-i18n="dlPlaySoon">Google Play — Em breve</strong></div>
+              </div>
+              <a href="https://app.argusaisentinel.com" class="store-btn" target="_blank" rel="noopener">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                <div><small data-i18n="dlIosSmall">Install on</small><strong data-i18n="dlIos">iPhone — Web App (PWA)</strong></div>
+              </a>
+            </div>
+            <div class="qr-box" data-i18n="qrPlaceholder">QR Code<br>Coming Soon</div>
+            <ol class="install-steps">
+              <li data-i18n="inst1">Android: install from Google Play.</li>
+              <li data-i18n="inst2">iPhone: open the Web App in Safari and tap Share → Add to Home Screen.</li>
+              <li data-i18n="inst3">Create your observer profile and submit your first observation.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>FrontSea Intelligence</h4>
+          <a href="https://frontseaintelligence.com" target="_blank" rel="noopener">frontseaintelligence.com</a>
+          <p>ARGUS AI Sentinel</p>
+        </div>
+        <div>
+          <h4 data-i18n="fLegal">Legal</h4>
+          <a href="privacy.html" data-i18n="fPrivacy">Privacy Policy</a>
+          <a href="terms.html" data-i18n="fTerms">Terms of Service</a>
+        </div>
+        <div>
+          <h4 data-i18n="fContact">Contact</h4>
+          <a href="mailto:contact@argusaisentinel.com">contact@argusaisentinel.com</a>
+        </div>
+        <div>
+          <h4 data-i18n="fSocial">Social</h4>
+          <a href="https://x.com/frontseaintel" target="_blank" rel="noopener">X</a>
+          <a href="https://www.instagram.com/azureai.app" target="_blank" rel="noopener">Instagram</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 FrontSea Intelligence · ARGUS AI Sentinel · Portugal</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="argus-i18n.js"></script>
+</body>
+</html>
